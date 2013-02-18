@@ -14,10 +14,10 @@ Click the Downloads Tab in the Tabbar above.
 
 ## Installation ##
 * Uncompress the Downloaded Library
-* Rename the uncompressed folder to LPD8806
-* Check that the LPD8806 folder contains LPD8806.cpp and LPD8806.h
-* Place the LPD8806 library folder your <WiringSketchFolder>/libraries/ folder, 
+* Rename the uncompressed folder to LPD8806VD
+* Check that the LPD8806VD folder contains `LPD8806VD.cpp` and `LPD8806VD.h`
+* Place the LPD8806VD library folder your `<WiringSketchFolder>/libraries/` folder, 
   if the libraries folder does not exist - create it first!
 * (You can find - and also change - the Wiring Sketch Folder within the Wiring IDE under 
-  File -> Preferences)
+  **File -> Preferences**)
 * Restart the IDE
