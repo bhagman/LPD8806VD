@@ -6,7 +6,7 @@
 || @contribution   Adafruit Industries (LPD8806 Library and Example Code)
 ||
 || @description
-|| | Wiring library to control LPD8806-based RGB LED strips
+|| | Wiring library to control LPD8806-based RGB LED strips.
 || | Based on LPD8806 library by Adafruit Industries.
 || | Changes:
 || | - 8 or 16 bit limited palette (less SRAM usage)
@@ -28,6 +28,9 @@
 || | are only 21 bits of resolution in the color depth (in 3 byte or
 || | "24 bit mode").
 || |
+|| | 16 bit color is really only 15 bit (High color).
+|| | The color sample layout is 15-bit (5:5:5).
+|| | 0b0rrrrrgg gggbbbbb
 || #
 ||
 */
@@ -37,7 +40,6 @@
 || TODOOZE:
 ||
 || - Re-add malloc() for Crazy People(tm) that want to use the Heap.
-|| - Fix Wheel() function... zoinks! oO
 || - Use shiftOut() for bit-bang.
 || - Converter for 16 bit -> 24 bit colors.
 ||
@@ -154,7 +156,7 @@ LPD8806VD::LPD8806VD(uint16_t n, uint8_t dpin, uint8_t cpin, uint8_t *buf, uint8
 
 
 // Sets the color depth.
-// Accepted color depths: 1, 2, 3 (or 8, 16, 21/24)
+// Accepted color depths: 1, 2, 3 (or 8, 15/16, 21/24)
 void LPD8806VD::setColorDepth(uint8_t depth)
 {
   switch (depth)
@@ -167,6 +169,7 @@ void LPD8806VD::setColorDepth(uint8_t depth)
     case 8:
       colorDepth = 1;
       break;
+    case 15:
     case 16:
       colorDepth = 2;
       break;
@@ -250,7 +253,7 @@ void LPD8806VD::startSPI(void)
   // Go as fast as you can go!!! :)
   // 16MHz / 2 = 8 MHz -- go like sn*t!
 
-  SPI.setClockDivider(SPI_CLOCK_DIV2);
+  SPI.setClockDivider(SPI_CLOCK_DIV4);
 
   // Although the LPD8806 should, in theory, work up to 20MHz, the unshielded
   // wiring from the microcontroller can be more susceptible to interference.
@@ -455,7 +458,7 @@ uint8_t LPD8806VD::getBlue8(uint8_t c8)
 
 uint8_t LPD8806VD::getRed16(uint16_t c16)
 {
-  return ((c16 & 0b1111110000000000) >> (8 + 1));
+  return ((c16 & 0b0111110000000000) >> (8 + 0));
 }
 
 uint8_t LPD8806VD::getGreen16(uint16_t c16)
@@ -474,12 +477,12 @@ uint8_t LPD8806VD::getBlue16(uint16_t c16)
 uint16_t LPD8806VD::Color8To16(uint8_t c8)
 {
   // C8 = rrrgggbb
-  // C16 = rrrrrrgg gggbbbbb
+  // -> C16 = 0rrr00gg g00bb000
   uint8_t r = (c8 & 0b11100000);
   uint8_t g = (c8 & 0b00011100) << 3;
   uint8_t b = (c8 & 0b00000011) << 6;
   
-  return (uint16_t)(r) << 8 |
+  return (uint16_t)(r) << (8 - 1) |
          (uint16_t)(g) << 2 |
          (uint16_t)(b) >> 3;
 }
@@ -558,7 +561,7 @@ uint32_t LPD8806VD::Color(uint8_t r, uint8_t g, uint8_t b)
       break;
     case 2:
       packedColor = 0x0000ffff &
-                    ((uint16_t)(r & 0b11111100) << 8 |
+                    ((uint16_t)(r & 0b11111000) << 7 |
                      (uint16_t)(g & 0b11111000) << 2 |
                      (uint16_t)(b & 0b11111000) >> 3);
       break;

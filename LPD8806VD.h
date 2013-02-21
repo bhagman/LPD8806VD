@@ -6,7 +6,7 @@
 || @contribution   Adafruit Industries (LPD8806 Library and Example Code)
 ||
 || @description
-|| | Wiring library to control LPD8806-based RGB LED strips
+|| | Wiring library to control LPD8806-based RGB LED strips.
 || | Based on LPD8806 library by Adafruit Industries.
 || | Changes:
 || | - 8 or 16 bit limited palette (less SRAM usage)
@@ -86,7 +86,7 @@ class LPD8806VD
     uint8_t colorDepth;                           // 1 = 8 bit, 2 = 16 bit, 3 = 24/32 bit
     uint16_t numLEDs;                             // Number of RGB LEDs in strip
     uint8_t latchBytes;                           // Bytes to clear "latch"
-    uint8_t *pixels;                              // Holds LED color values (3 bytes each) + latch
+    uint8_t *pixels;                              // Holds LED color values
     uint8_t clkpin, datapin;                      // Clock & data pin numbers
     uint8_t clkpinmask, datapinmask;              // Clock & data PORT bitmasks
     volatile uint8_t *clkport, *dataport;         // Clock & data PORT registers
